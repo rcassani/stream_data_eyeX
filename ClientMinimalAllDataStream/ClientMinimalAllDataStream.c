@@ -6,8 +6,10 @@
 * raymundo.cassani@gmail.com
 * 2016
 *
-* Usage
-* 1. Run the .exe
+* Usage:
+* ./ClientMinimalAllDataStream SERVER_IP PORT
+* e.g. :
+* ./ClientMinimalAllDataStream 127.0.0.1 35000
 
 ##################################################
 ###############  Original Header #################
@@ -47,7 +49,6 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/ms737629%28v=vs.85%29.as
 #pragma comment (lib, "Mswsock.lib")           //TCP
 #pragma comment (lib, "AdvApi32.lib")          //TCP
 
-
 // ID of the global interactor that provides our data stream; must be unique within the application.
 static const TX_STRING InteractorId = "MuSAE Lab";
 
@@ -56,17 +57,12 @@ static TX_HANDLE g_hGlobalInteractorSnapshot = TX_EMPTY_HANDLE;
 
 SOCKET clientSocket = INVALID_SOCKET;         //TCP
 BOOL streaming = FALSE;
-//WSADATA wsaData; 	                           //TCP
 
-
+/*
+ * Returns a Socket object, which is the ClientSocket already connected to the specified Server ip:port
+ */
 SOCKET OpenClientSocket(char *ip, char* port)
 {
-	////////////////////////////////////////////////////////
-	// Creates Socket and Connects to the server at ip:port
-	//
-	////////////////////////////////////////////////////////	
-
-	// 
 	// Creating Socket
 	WSADATA wsaData;        //structure is used to store Windows Sockets initialization information		
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -120,29 +116,24 @@ SOCKET OpenClientSocket(char *ip, char* port)
 	return theSocket;
 }
 
+/*
+ * Closes the provided Socket
+ */
 void CloseClientSocket(SOCKET theSocket)
 {
-	////////////////////////////////////////////////////////
-	// Closes the Socket
-	//
-	////////////////////////////////////////////////////////
 	closesocket(theSocket);
 	WSACleanup();
 }
 
+/*
+ * Formats an Float (32bits) from host to TCP/IP network byte order (which is big-endian)
+ * and sends it thought the Socket
+ */
 void SendFloatClientSocket(SOCKET theSocket, float value)
 {
-	////////////////////////////////////////////////////////
-	// Formats an Float (32bits) from host to TCP/IP network byte order (which is big-endian)
-	// and sends it thought the Socket
-	////////////////////////////////////////////////////////
-
 	int htonvalue[] = { htonf(value) };
 	send(theSocket, (char*)htonvalue, sizeof(int), 0);
 }
-
-
-
 
 /*
  * Initializes g_hGlobalInteractorSnapshot with an interactor that has the Fixation, Gaze and Position Data behavior.
@@ -392,11 +383,7 @@ int main(int argc, char* argv[])
 
 	system("cls");
 
-	////////////////////////////////////////////////////////
-	// Check input arguments for IP and PORT
-	// and open client socket if required
-	////////////////////////////////////////////////////////	
-
+	// Check input arguments for IP and PORT and open client socket if required
 	if (argc != 3)
 	{
 		printf("Usage: %s <IP> <PORT>\n", argv[0]);
@@ -420,7 +407,6 @@ int main(int argc, char* argv[])
 	}
 	Sleep(2000);
 
-	//EyeX
 	TX_CONTEXTHANDLE hContext = TX_EMPTY_HANDLE;
 	TX_TICKET hConnectionStateChangedTicket = TX_INVALID_TICKET;
 	TX_TICKET hEventHandlerTicket = TX_INVALID_TICKET;
