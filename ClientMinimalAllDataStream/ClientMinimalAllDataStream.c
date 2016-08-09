@@ -232,16 +232,16 @@ void OnFixationDataEvent(TX_HANDLE hFixationDataBehavior)
 		//TCP	Preparing data package = #bytes, BehaviorType, Fixation_EventType, X, Y, Timestamp
 		
 		data[0] = 20; // Number of following bytes (5 values * 4 bytes / value)
-		data[1] = 7;  // Behavior Type, 7 for Fixation
+		data[1] = eventParams.Timestamp; // Seconds since the System Boot Time
+		data[2] = 7;  // Behavior Type, 7 for Fixation
 
 		eventType = eventParams.EventType;
-		if (eventType == TX_FIXATIONDATAEVENTTYPE_DATA)   { data[2] = 3; }
-		if (eventType == TX_FIXATIONDATAEVENTTYPE_END)    { data[2] = 2; }
-		if (eventType == TX_FIXATIONDATAEVENTTYPE_BEGIN)  { data[2] = 1; }
+		if (eventType == TX_FIXATIONDATAEVENTTYPE_DATA)   { data[3] = 3; }
+		if (eventType == TX_FIXATIONDATAEVENTTYPE_END)    { data[3] = 2; }
+		if (eventType == TX_FIXATIONDATAEVENTTYPE_BEGIN)  { data[3] = 1; }
 			
-		data[3] = eventParams.X;
-		data[4] = eventParams.Y;
-		data[5] = eventParams.Timestamp;
+		data[4] = eventParams.X;
+		data[5] = eventParams.Y;
 
 		eventDescription = (eventType == TX_FIXATIONDATAEVENTTYPE_DATA) ? "Data"
 			: ((eventType == TX_FIXATIONDATAEVENTTYPE_END) ? "End"
@@ -276,10 +276,10 @@ void OnGazeDataEvent(TX_HANDLE hGazeDataBehavior)
 		/* Every time there is an event, send a package*/
 		//TCP	Preparing data package = #bytes, BehaviorType, X, Y, Timestamp
 		data[0] = 16; // Number of following bytes (4 values * 4 bytes / value)
-		data[1] = 1;  // Behavior Type, 1 for Gaze
-		data[2] = eventParams.X;
-		data[3] = eventParams.Y;
-		data[4] = eventParams.Timestamp;
+		data[1] = eventParams.Timestamp; // Seconds since the System Boot Time
+		data[2] = 1;  // Behavior Type, 1 for Gaze
+		data[3] = eventParams.X;
+		data[4] = eventParams.Y;
 
 		printf("Gaze Data: (%.1f, %.1f) time %.0f ms\n", eventParams.X, eventParams.Y, eventParams.Timestamp);
 
@@ -311,15 +311,15 @@ void OnPositionDataEvent(TX_HANDLE hGazeDataBehavior)
 		/* Every time there is an event, send a package*/			
 		//TCP	Preparing data package = #bytes, BehaviorType, XL, YL, ZL, XR, YR, ZR, Timestamp
 		data[0] = 32; // Number of following bytes (8 values * 4 bytes / value)
-		data[1] = 3;  // Behavior Type, 3 for Eye Position
-		data[2] = eventParams.LeftEyeX;
-		data[3] = eventParams.LeftEyeY;
-		data[4] = eventParams.LeftEyeZ;
-		data[5] = eventParams.RightEyeX;
-		data[6] = eventParams.RightEyeY;
-		data[7] = eventParams.RightEyeZ;
-		data[8] = eventParams.Timestamp;
-
+		data[1] = eventParams.Timestamp; // Seconds since the System Boot Time
+		data[2] = 3;  // Behavior Type, 3 for Eye Position
+		data[3] = eventParams.LeftEyeX;
+		data[4] = eventParams.LeftEyeY;
+		data[5] = eventParams.LeftEyeZ;
+		data[6] = eventParams.RightEyeX;
+		data[7] = eventParams.RightEyeY;
+		data[8] = eventParams.RightEyeZ;
+		
 		printf("Eye Position: L(%.1f, %.1f, %.1f), R(%.1f, %.1f, %.1f), time %.0f ms\n", eventParams.LeftEyeX, eventParams.LeftEyeY, eventParams.LeftEyeZ, eventParams.RightEyeX, eventParams.RightEyeY, eventParams.RightEyeZ, eventParams.Timestamp);
 
 		if (streaming)
